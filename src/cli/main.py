@@ -80,10 +80,17 @@ def ingest(
     reset: bool = typer.Option(False, "--reset", help="Clear existing index before ingestion"),
 ) -> None:
     """Index a codebase into the knowledge base for RAG retrieval."""
+    from src.rag.ingestion import ingest_codebase
+
     console.print(f"[bold blue]DevFlow Ingest[/bold blue]")
     console.print(f"  Repo: {repo}")
-    console.print()
-    console.print("[yellow]RAG Ingestion — coming in Phase 4[/yellow]")
+
+    with console.status("[bold green]Indexing codebase...[/bold green]"):
+        count = asyncio.run(ingest_codebase(root=repo, reset=reset))
+
+    console.print(f"[green]Indexed {count} chunks from {repo}[/green]")
+    if count == 0:
+        console.print("[yellow]No chunks were indexed. Check that the directory contains supported files.[/yellow]")
 
 
 @app.command()
