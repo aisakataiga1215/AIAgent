@@ -1,5 +1,10 @@
+import asyncio
 import typer
 from rich.console import Console
+from rich.panel import Panel
+from rich.markdown import Markdown
+
+from src.config import settings
 
 app = typer.Typer(
     name="devflow",
@@ -22,14 +27,39 @@ def review(
     output: str = typer.Option("terminal", "--output", "-o", help="Output format: terminal|markdown|json"),
 ) -> None:
     """Run the Code Review Agent on a repository, PR, or branch."""
-    console.print(f"[bold blue]DevFlow Review[/bold blue]")
-    console.print(f"  Repo: {repo}")
-    if pr:
-        console.print(f"  PR: #{pr}")
+    if not settings.anthropic_api_key:
+        console.print("[red]Error: ANTHROPIC_API_KEY not set. Create a .env file or set the environment variable.[/red]")
+        raise typer.Exit(code=1)
+
+    from src.agents.code_review import review_repository
+
+    target = "HEAD~1"
     if branch:
-        console.print(f"  Branch: {branch}")
+        target = branch
+    elif pr:
+        target = f"origin/main..HEAD"
+
+    console.print(f"[bold blue]DevFlow Review[/bold blue]")
+    console.print(f"  Repo: {repo}  Target: {target}")
     console.print()
-    console.print("[yellow]Code Review Agent — coming in Phase 3[/yellow]")
+
+    with console.status("[bold green]Code Review Agent analyzing...[/bold green]"):
+        result = asyncio.run(review_repository(workspace=repo, target=target))
+
+    console.print()
+    if result.success:
+        if output == "json":
+            import json
+            console.print(json.dumps({"content": result.content, "tool_calls": result.tool_calls, "tokens": result.tokens_used}, indent=2))
+        elif output == "markdown":
+            console.print(result.content)
+        else:
+            console.print(Panel(Markdown(result.content), title="Code Review", border_style="blue"))
+        console.print(f"[dim]Tool calls: {result.tool_calls} | Tokens: {result.tokens_used}[/dim]")
+    else:
+        console.print(f"[red]Review failed: {result.content}[/red]")
+        for step in result.steps:
+            console.print(f"[dim]  Step {step.iteration}: action={step.action}, success={bool(step.observation)}[/dim]")
 
 
 @app.command()
