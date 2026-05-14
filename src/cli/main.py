@@ -70,7 +70,7 @@ def workflow(
     """Run a multi-agent workflow (e.g. pr-review, full-ci)."""
     from src.workflow.templates import WORKFLOW_TEMPLATES
     from src.workflow.state import WorkflowState
-    from src.workflow.nodes import orchestrator_node, code_review_node, aggregate_node
+    from src.workflow.nodes import orchestrator_node, code_review_node, test_gen_node, aggregate_node
 
     if name not in WORKFLOW_TEMPLATES:
         console.print(f"[red]Unknown workflow: {name}. Available: {list(WORKFLOW_TEMPLATES.keys())}[/red]")
@@ -99,6 +99,9 @@ def workflow(
         for p in state["plan"]:
             if p["agent"] == "code_review":
                 update = await code_review_node(state)
+                state.update(update)
+            elif p["agent"] == "test_gen":
+                update = await test_gen_node(state)
                 state.update(update)
 
         final = await aggregate_node(state)
@@ -130,6 +133,34 @@ def ingest(
     console.print(f"[green]Indexed {count} chunks from {repo}[/green]")
     if count == 0:
         console.print("[yellow]No chunks were indexed. Check that the directory contains supported files.[/yellow]")
+
+
+@app.command()
+def test(
+    file: str = typer.Option(None, "--file", "-f", help="Target file to generate tests for"),
+    repo: str = typer.Option(".", "--repo", "-r", help="Path to the repository"),
+) -> None:
+    """Generate pytest tests for a file or changed files."""
+    if not settings.anthropic_api_key:
+        console.print("[red]Error: ANTHROPIC_API_KEY not set.[/red]")
+        raise typer.Exit(code=1)
+
+    from src.agents.test_gen import generate_tests
+
+    target_desc = file or "changed files"
+    console.print(f"[bold blue]DevFlow Test Gen[/bold blue]")
+    console.print(f"  Target: {target_desc}  Repo: {repo}")
+    console.print()
+
+    with console.status("[bold green]Test Generation Agent working...[/bold green]"):
+        result = asyncio.run(generate_tests(workspace=repo, file_path=file))
+
+    console.print()
+    if result.success:
+        console.print(Panel(Markdown(result.content), title="Test Generation", border_style="green"))
+        console.print(f"[dim]Tool calls: {result.tool_calls} | Tokens: {result.tokens_used}[/dim]")
+    else:
+        console.print(f"[red]Test generation failed: {result.content}[/red]")
 
 
 @app.command()

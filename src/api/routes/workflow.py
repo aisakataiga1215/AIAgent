@@ -2,7 +2,7 @@ from fastapi import APIRouter, HTTPException
 from pydantic import BaseModel
 from src.workflow.templates import WORKFLOW_TEMPLATES
 from src.workflow.state import WorkflowState
-from src.workflow.nodes import orchestrator_node, code_review_node, aggregate_node
+from src.workflow.nodes import orchestrator_node, code_review_node, test_gen_node, aggregate_node
 
 router = APIRouter(tags=["workflow"])
 
@@ -43,6 +43,9 @@ async def run_workflow(req: WorkflowRequest) -> WorkflowResponse:
     for p in state["plan"]:
         if p["agent"] == "code_review":
             update = await code_review_node(state)
+            state.update(update)
+        elif p["agent"] == "test_gen":
+            update = await test_gen_node(state)
             state.update(update)
 
     final = await aggregate_node(state)
