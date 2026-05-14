@@ -18,7 +18,7 @@ class Settings(BaseSettings):
 
     # Database
     database_url: str = "sqlite:///data/devflow.db"
-    chromadb_path: str = "./data/chromadb"
+    qdrant_path: str = "./data/qdrant"
 
     # Observability
     langfuse_public_key: str = ""

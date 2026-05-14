@@ -36,7 +36,7 @@ class DummyEmbedder:
         return self._simple_vector(query)
 
     @staticmethod
-    def _simple_vector(text: str, dim: int = 128) -> list[float]:
+    def _simple_vector(text: str, dim: int = 1024) -> list[float]:
         import hashlib
         h = hashlib.sha256(text.encode()).digest()
         # Expand to required dim
