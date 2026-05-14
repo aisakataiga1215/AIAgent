@@ -139,10 +139,13 @@ def serve(
     reload: bool = typer.Option(False, "--reload"),
 ) -> None:
     """Start the DevFlow API server."""
+    import uvicorn
+
     console.print(f"[bold blue]DevFlow Server[/bold blue]")
     console.print(f"  Starting at http://{host}:{port}")
+    console.print(f"  API docs at http://{host}:{port}/docs")
     console.print()
-    console.print("[yellow]API Server — coming in Phase 7[/yellow]")
+    uvicorn.run("src.main:app", host=host, port=port, reload=reload, log_level=settings.log_level.lower())
 
 
 if __name__ == "__main__":
