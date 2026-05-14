@@ -1,0 +1,42 @@
+# DevFlow AI — Project-level Agent Configuration
+# Each project can customize agent behavior via this file.
+
+project:
+  name: "DevFlow AI"
+  language: python
+  framework: fastapi
+
+code_review:
+  enabled: true
+  strictness: medium       # low | medium | high
+  focus_areas:
+    - security
+    - performance
+    - code_style
+    - error_handling
+  ignore_patterns:
+    - "**/migrations/**"
+    - "**/vendor/**"
+    - "*.lock"
+
+test_generation:
+  enabled: true
+  framework: pytest
+  coverage_target: 80
+  mock_strategy: auto      # auto | manual
+
+doc_manager:
+  enabled: true
+  check_on_pr: true
+  template: google-style   # google | numpy | sphinx
+
+knowledge_base:
+  index_on_commit: false
+  chunk_size: 1000
+  chunk_overlap: 200
+  exclude_dirs:
+    - .git
+    - __pycache__
+    - node_modules
+    - .venv
+    - data
