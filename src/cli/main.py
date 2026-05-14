@@ -67,11 +67,50 @@ def workflow(
     name: str = typer.Argument("pr-review", help="Workflow name to run"),
     repo: str = typer.Option(".", "--repo", "-r", help="Path to the repository"),
 ) -> None:
-    """Run a multi-agent workflow (e.g. pr-review, full-ci, doc-sync)."""
+    """Run a multi-agent workflow (e.g. pr-review, full-ci)."""
+    from src.workflow.templates import WORKFLOW_TEMPLATES
+    from src.workflow.state import WorkflowState
+    from src.workflow.nodes import orchestrator_node, code_review_node, aggregate_node
+
+    if name not in WORKFLOW_TEMPLATES:
+        console.print(f"[red]Unknown workflow: {name}. Available: {list(WORKFLOW_TEMPLATES.keys())}[/red]")
+        raise typer.Exit(code=1)
+
+    template = WORKFLOW_TEMPLATES[name](repo=repo)
+
     console.print(f"[bold blue]DevFlow Workflow: {name}[/bold blue]")
     console.print(f"  Repo: {repo}")
     console.print()
-    console.print("[yellow]Workflow Engine — coming in Phase 6[/yellow]")
+
+    state: WorkflowState = {
+        "messages": [],
+        "task": template["task"],
+        "plan": template["plan"],
+        "agent_outputs": {},
+        "errors": [],
+        "status": "pending",
+        "metadata": template["metadata"],
+    }
+
+    async def _run():
+        state_update = await orchestrator_node(state)
+        state.update(state_update)
+
+        for p in state["plan"]:
+            if p["agent"] == "code_review":
+                update = await code_review_node(state)
+                state.update(update)
+
+        final = await aggregate_node(state)
+        state.update(final)
+        return state
+
+    with console.status("[bold green]Running workflow...[/bold green]"):
+        result = asyncio.run(_run())
+
+    console.print()
+    console.print(Panel(Markdown(result["messages"][-1]["content"] if result["messages"] else "No output"), title=f"Workflow Result: {name}", border_style="blue"))
+    console.print(f"[dim]Status: {result['status']}[/dim]")
 
 
 @app.command()
