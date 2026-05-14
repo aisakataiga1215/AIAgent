@@ -12,13 +12,13 @@ logger = get_logger(__name__)
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     setup_logging()
-    logger.info("devflow_startup", host=settings.host, port=settings.port)
+    logger.info("agentflow_startup", host=settings.host, port=settings.port)
     yield
-    logger.info("devflow_shutdown")
+    logger.info("agentflow_shutdown")
 
 
 app = FastAPI(
-    title="DevFlow AI",
+    title="AgentFlow",
     description="Multi-Agent Development Workflow System",
     version="0.1.0",
     lifespan=lifespan,

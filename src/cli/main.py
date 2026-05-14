@@ -7,8 +7,8 @@ from rich.markdown import Markdown
 from src.config import settings
 
 app = typer.Typer(
-    name="devflow",
-    help="DevFlow AI — Multi-Agent Development Workflow System",
+    name="agentflow",
+    help="AgentFlow — Multi-Agent Development Workflow System",
     add_completion=False,
 )
 console = Console()
@@ -16,7 +16,7 @@ console = Console()
 
 @app.callback()
 def callback() -> None:
-    """DevFlow AI — automate code review, test generation, and documentation."""
+    """AgentFlow — automate code review, test generation, and documentation."""
 
 
 @app.command()
@@ -39,7 +39,7 @@ def review(
     elif pr:
         target = f"origin/main..HEAD"
 
-    console.print(f"[bold blue]DevFlow Review[/bold blue]")
+    console.print(f"[bold blue]AgentFlow Review[/bold blue]")
     console.print(f"  Repo: {repo}  Target: {target}")
     console.print()
 
@@ -78,7 +78,7 @@ def workflow(
 
     template = WORKFLOW_TEMPLATES[name](repo=repo)
 
-    console.print(f"[bold blue]DevFlow Workflow: {name}[/bold blue]")
+    console.print(f"[bold blue]AgentFlow Workflow: {name}[/bold blue]")
     console.print(f"  Repo: {repo}")
     console.print()
 
@@ -124,7 +124,7 @@ def ingest(
     """Index a codebase into the knowledge base for RAG retrieval."""
     from src.rag.ingestion import ingest_codebase
 
-    console.print(f"[bold blue]DevFlow Ingest[/bold blue]")
+    console.print(f"[bold blue]AgentFlow Ingest[/bold blue]")
     console.print(f"  Repo: {repo}")
 
     with console.status("[bold green]Indexing codebase...[/bold green]"):
@@ -148,7 +148,7 @@ def test(
     from src.agents.test_gen import generate_tests
 
     target_desc = file or "changed files"
-    console.print(f"[bold blue]DevFlow Test Gen[/bold blue]")
+    console.print(f"[bold blue]AgentFlow Test Gen[/bold blue]")
     console.print(f"  Target: {target_desc}  Repo: {repo}")
     console.print()
 
@@ -169,10 +169,10 @@ def serve(
     port: int = typer.Option(8000, "--port", "-p"),
     reload: bool = typer.Option(False, "--reload"),
 ) -> None:
-    """Start the DevFlow API server."""
+    """Start the AgentFlow API server."""
     import uvicorn
 
-    console.print(f"[bold blue]DevFlow Server[/bold blue]")
+    console.print(f"[bold blue]AgentFlow Server[/bold blue]")
     console.print(f"  Starting at http://{host}:{port}")
     console.print(f"  API docs at http://{host}:{port}/docs")
     console.print()

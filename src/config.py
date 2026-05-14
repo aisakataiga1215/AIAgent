@@ -17,7 +17,7 @@ class Settings(BaseSettings):
     embedding_model: str = "text-embedding-3-small"
 
     # Database
-    database_url: str = "sqlite:///data/devflow.db"
+    database_url: str = "sqlite:///data/agentflow.db"
     qdrant_path: str = "./data/qdrant"
 
     # Observability

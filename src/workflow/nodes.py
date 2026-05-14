@@ -70,7 +70,7 @@ async def aggregate_node(state: WorkflowState) -> dict:
     outputs = state.get("agent_outputs", {})
     errors = state.get("errors", [])
 
-    sections = [f"# DevFlow Workflow Report\n"]
+    sections = [f"# AgentFlow Workflow Report\n"]
     sections.append(f"## Task: {state.get('task', 'N/A')}\n")
 
     for agent_name, output in outputs.items():

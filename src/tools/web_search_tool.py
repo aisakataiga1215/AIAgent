@@ -20,7 +20,7 @@ class WebSearchTool(BaseTool):
                 resp = await client.get(
                     "https://api.duckduckgo.com/",
                     params={"q": query, "format": "json", "no_html": 1},
-                    headers={"User-Agent": "DevFlowAI/0.1"},
+                    headers={"User-Agent": "AgentFlow/0.1"},
                 )
                 data = resp.json()
                 results = []

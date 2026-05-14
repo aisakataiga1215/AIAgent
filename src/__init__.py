@@ -1,1 +1,1 @@
-"""DevFlow AI — Multi-Agent Development Workflow System."""
+"""AgentFlow — Multi-Agent Development Workflow System."""

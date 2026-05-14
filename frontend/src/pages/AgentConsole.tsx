@@ -5,7 +5,7 @@ export function AgentConsole() {
     <div>
       <h2>Agent Console</h2>
       <p style={{ color: "#888", marginTop: 8 }}>
-        Real-time WebSocket connection to the DevFlow agent system.
+        Real-time WebSocket connection to the AgentFlow agent system.
       </p>
       <div style={{ marginTop: 24 }}>
         <AgentStream />

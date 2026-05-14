@@ -37,7 +37,7 @@ def test_openapi_docs(client):
     resp = client.get("/openapi.json")
     assert resp.status_code == 200
     spec = resp.json()
-    assert spec["info"]["title"] == "DevFlow AI"
+    assert spec["info"]["title"] == "AgentFlow"
     assert "/api/v1/review" in spec["paths"]
     assert "/api/v1/workflow" in spec["paths"]
     assert "/api/v1/agent/list" in spec["paths"]

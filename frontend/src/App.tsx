@@ -9,7 +9,7 @@ function App() {
       <div style={{ minHeight: "100vh", background: "#0d0d0d", color: "#e5e5e5" }}>
         <nav style={{ display: "flex", gap: 24, padding: "16px 32px", borderBottom: "1px solid #222", alignItems: "center" }}>
           <Link to="/" style={{ fontWeight: 700, fontSize: 18, color: "#3b82f6", textDecoration: "none" }}>
-            DevFlow AI
+            AgentFlow
           </Link>
           <Link to="/" style={navLinkStyle}>Dashboard</Link>
           <Link to="/review" style={navLinkStyle}>Code Review</Link>

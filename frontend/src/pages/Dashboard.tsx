@@ -22,7 +22,7 @@ export function Dashboard() {
 
   return (
     <div>
-      <h2>DevFlow Dashboard</h2>
+      <h2>AgentFlow Dashboard</h2>
       <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill, minmax(280px, 1fr))", gap: 16, marginTop: 16 }}>
         <Link to="/review" style={{ textDecoration: "none" }}>
           <div style={cardStyle}>

@@ -1,8 +1,8 @@
-# DevFlow AI — Project-level Agent Configuration
+# AgentFlow — Project-level Agent Configuration
 # Each project can customize agent behavior via this file.
 
 project:
-  name: "DevFlow AI"
+  name: "AgentFlow"
   language: python
   framework: fastapi
 
